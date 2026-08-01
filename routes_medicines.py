@@ -28,6 +28,20 @@ def get_active_medicines(skip: int = 0, limit: int = 100, db: Session = Depends(
     medicines = db.query(models.Medicine).filter(models.Medicine.is_active == True).offset(skip).limit(limit).all()
     return medicines
 
+@router.put("/{medicine_id}", response_model=schemas.MedicineResponse)
+def update_medicine(medicine_id: int, medicine: schemas.MedicineCreate, db: Session = Depends(get_db)):
+    db_medicine = db.query(models.Medicine).filter(models.Medicine.id == medicine_id).first()
+    if not db_medicine:
+        raise HTTPException(status_code=404, detail="Medicine not found")
+    
+    update_data = medicine.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_medicine, key, value)
+        
+    db.commit()
+    db.refresh(db_medicine)
+    return db_medicine
+
 @router.delete("/{medicine_id}")
 def delete_medicine(medicine_id: int, db: Session = Depends(get_db)):
     db_medicine = db.query(models.Medicine).filter(models.Medicine.id == medicine_id).first()
