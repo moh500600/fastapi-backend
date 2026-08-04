@@ -10,13 +10,35 @@ from database import engine, get_db
 
 import routes_categories
 import routes_medicines
+import routes_skincare
+import routes_medical_tools
+import routes_medical_devices
+import routes_payments
+import routes_coupons
+import routes_bank_transfers
+import routes_orders
+import routes_order_tracking
+from fastapi.staticfiles import StaticFiles
+import os
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Pharma Offers API")
 
+upload_dir = os.path.join(os.path.dirname(__file__), "..", "api", "assets", "uploads")
+os.makedirs(upload_dir, exist_ok=True)
+app.mount("/assets/uploads", StaticFiles(directory=upload_dir), name="uploads")
+
 app.include_router(routes_categories.router)
 app.include_router(routes_medicines.router)
+app.include_router(routes_skincare.router)
+app.include_router(routes_medical_tools.router)
+app.include_router(routes_medical_devices.router)
+app.include_router(routes_payments.router)
+app.include_router(routes_coupons.router)
+app.include_router(routes_bank_transfers.router)
+app.include_router(routes_orders.router)
+app.include_router(routes_order_tracking.router)
 
 # السماح للاتصالات من تطبيق فلاتر و واجهة الويب
 app.add_middleware(
