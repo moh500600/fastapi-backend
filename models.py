@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Float
-from sqlalchemy.dialects.mysql import LONGTEXT
+# from sqlalchemy.dialects.mysql import LONGTEXT
 from database import Base
 import datetime
 
@@ -9,7 +9,7 @@ class Offer(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), index=True)
     description = Column(String(500))
-    image_url = Column(LONGTEXT)
+    image_url = Column(Text)
     offer_type = Column(String(50))
     discount = Column(Integer, default=0)
     start_date = Column(DateTime, default=datetime.datetime.utcnow)
@@ -37,7 +37,7 @@ class Category(Base):
     name = Column(String(255), index=True)
     description = Column(String(500))
     color = Column(String(50))
-    image_url = Column(LONGTEXT)
+    image_url = Column(Text)
     status = Column(String(50), default='active')
     created = Column(String(50)) # We'll store timestamp as string for simplicity like JS Date.now() or we could use DateTime. Let's use BigInteger for Date.now().
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
@@ -52,7 +52,7 @@ class Medicine(Base):
     discount = Column(Float, default=0)
     categories = Column(String(255))
     company = Column(String(255))
-    image_url = Column(LONGTEXT)
+    image_url = Column(Text)
     composition = Column(Text)
     country = Column(String(100))
     code = Column(String(100))
@@ -66,7 +66,7 @@ class Medicine(Base):
     barcode = Column(String(100))
     warnings = Column(Text)
     uses = Column(Text)
-    faqs = Column(LONGTEXT)
+    faqs = Column(Text)
     is_active = Column(Boolean, default=True)
     is_best_seller = Column(Boolean, default=False)
     is_new_arrival = Column(Boolean, default=False)
@@ -95,8 +95,8 @@ class SkincareProduct(Base):
     seo_keyword = Column(String(255), nullable=True)
     seo_description = Column(Text, nullable=True)
     product_url = Column(String(500), nullable=True)
-    image_url = Column(LONGTEXT, nullable=True) # First image
-    images = Column(LONGTEXT, nullable=True) # JSON array of additional images
+    image_url = Column(Text, nullable=True) # First image
+    images = Column(Text, nullable=True) # JSON array of additional images
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -116,7 +116,7 @@ class MedicalTool(Base):
     status = Column(String(50), default="active")
     purchase_date = Column(DateTime, nullable=True)
     description = Column(Text, nullable=True)
-    image_url = Column(LONGTEXT, nullable=True)
+    image_url = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -137,7 +137,7 @@ class MedicalDevice(Base):
     purchase_date = Column(DateTime, nullable=True)
     warranty_end = Column(DateTime, nullable=True)
     description = Column(Text, nullable=True)
-    image_url = Column(LONGTEXT, nullable=True)
+    image_url = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -216,4 +216,46 @@ class OrderStatusHistory(Base):
     note = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), index=True)
+    email = Column(String(255), unique=True, index=True)
+    password = Column(String(255))
+    phone = Column(String(100), nullable=True)
+    account_type = Column(String(50)) # عميل or صيدلي
+    role = Column(String(50), default="عميل") # For dashboard permissions
+    status = Column(String(50), default="نشط")
+    scope = Column(String(100), default="كامل النظام")
+    notes = Column(Text, nullable=True)
+    last_login = Column(String(100), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class HealthService(Base):
+    __tablename__ = "health_services"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), index=True)
+    description = Column(Text, nullable=True)
+    full_description = Column(Text, nullable=True)
+    category = Column(String(100), nullable=True)
+    price = Column(Float, default=0.0)
+    duration = Column(String(100), nullable=True)
+    status = Column(String(50), default="active")
+    bookings = Column(Integer, default=0)
+    daily_bookings = Column(Integer, default=0)
+    provider = Column(String(255), nullable=True)
+    location = Column(String(255), nullable=True)
+    before_instructions = Column(Text, nullable=True)
+    after_instructions = Column(Text, nullable=True)
+    days = Column(String(255), nullable=True) # Stored as comma separated string
+    available_from = Column(String(50), nullable=True)
+    available_to = Column(String(50), nullable=True)
+    all_day = Column(Boolean, default=False)
+    image = Column(Text, nullable=True) # Base64
+    icon = Column(String(50), nullable=True)
+    color = Column(String(50), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
